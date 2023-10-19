@@ -16,11 +16,11 @@
         
         ```kotlin
         class A {
-        		val aNum = 10
+			val aNum = 10
             
-        		class B {
-        				fun getAnum() = println(aNum)  // impossible!
-            }
+			class B {
+				fun getAnum() = println(aNum)  // impossible!
+			}
         }
          
         fun main() {
@@ -32,15 +32,15 @@
         
         ```kotlin
         class A {
-        		val aNum = 10
-        		val num = 20
+			val aNum = 10
+			val num = 20
         
-            inner class B {
-        				val num = 30
-        				
-        				fun getAnum() = println(aNum)  // possible!
-        				fun getNum() = println(this@A.num)  // this@클래스이름
-            }
+            	inner class B {
+				val num = 30
+	        				
+				fun getAnum() = println(aNum)  // possible!
+				fun getNum() = println(this@A.num)  // this@클래스이름
+            	}
         }
          
         fun main() {
@@ -209,16 +209,16 @@ class Example // Implicitly inherits from Any
 
 ```kotlin
 open class Shape {
-		open val vertexCount: Int = 0
+	open val vertexCount: Int = 0
     
-		open fun draw() { /*...*/ }
-    fun fill() { /*...*/ }
+	open fun draw() { /*...*/ }
+	fun fill() { /*...*/ }
 }
 
 class Circle() : Shape() {
-		override val vertexCount = 4
+	override val vertexCount = 4
 
-    final override fun draw() { /*...*/ }
+	final override fun draw() { /*...*/ }
 }
 ```
 
