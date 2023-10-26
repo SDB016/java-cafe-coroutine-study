@@ -16,11 +16,11 @@
         
         ```kotlin
         class A {
-			val aNum = 10
-            
-			class B {
-				fun getAnum() = println(aNum)  // impossible!
-			}
+            val aNum = 10
+        
+            class B {
+                    fun getAnum() = println(aNum)  // impossible!
+            }
         }
          
         fun main() {
@@ -32,15 +32,15 @@
         
         ```kotlin
         class A {
-			val aNum = 10
-			val num = 20
+            val aNum = 10
+            val num = 20
         
-            	inner class B {
-				val num = 30
-	        				
-				fun getAnum() = println(aNum)  // possible!
-				fun getNum() = println(this@A.num)  // this@클래스이름
-            	}
+            inner class B {
+                val num = 30
+                
+                fun getAnum() = println(aNum)  // possible!
+                fun getNum() = println(this@A.num)  // this@클래스이름
+            }
         }
          
         fun main() {
@@ -57,8 +57,8 @@
 
 ```kotlin
 sealed class Shape {
-	class Circle(val rad: Double): Shape()
-	class Rectangle(val width: Double, val height: Double): Shape()
+    class Circle(val rad: Double): Shape()
+    class Rectangle(val width: Double, val height: Double): Shape()
 }
 class Triangle(val base: Double, val height: Double): Shape()
 ```
@@ -209,16 +209,16 @@ class Example // Implicitly inherits from Any
 
 ```kotlin
 open class Shape {
-	open val vertexCount: Int = 0
-    
-	open fun draw() { /*...*/ }
-	fun fill() { /*...*/ }
+    open val vertexCount: Int = 0
+
+    open fun draw() { /*...*/ }
+    fun fill() { /*...*/ }
 }
 
 class Circle() : Shape() {
-	override val vertexCount = 4
+    override val vertexCount = 4
 
-	final override fun draw() { /*...*/ }
+    final override fun draw() { /*...*/ }
 }
 ```
 
@@ -260,13 +260,13 @@ class Circle() : Shape() {
 
 ```kotlin
 internal open class TalkativeButton : Focusable {
-		private fun yell() = println("Hey!")
-		protected fun whisper() = println("Let's talk!")
+    private fun yell() = println("Hey!")
+    protected fun whisper() = println("Let's talk!")
 }
 
 fun TalkativeButton.giveSpeesh() {
-		yell()
-		whisper() // 오류: "whisper"에 접근할 수 없음: "whisper"는 "TalkativeButton"의 "protected" 멤버임
+    yell()
+    whisper() // 오류: "whisper"에 접근할 수 없음: "whisper"는 "TalkativeButton"의 "protected" 멤버임
 }
 ```
 
@@ -290,11 +290,11 @@ fun TalkativeButton.giveSpeesh() {
 
 ```kotlin
 interface clickable {
-		fun click()
-		fun showOff() = println("I'm clickable")  // default 구현 가능
+    fun click()
+    fun showOff() = println("I'm clickable")  // default 구현 가능
 }
 class Button : Clickable {
-		override fun click() = println("I was clicked")
+    override fun click() = println("I was clicked")
 }
 ```
 
@@ -302,12 +302,12 @@ class Button : Clickable {
 
 ```kotlin
 interface Focusable {
-		fun showOff() = println("focus!")
+    fun showOff() = println("focus!")
 }
 
 class Button : Clickable, Focusable {
-		override fun click() = println("I was clicked")
-		override fun showOff() = println("this is essential")  // 필수
+    override fun click() = println("I was clicked")
+    override fun showOff() = println("this is essential")  // 필수
 }
 ```
 
@@ -315,8 +315,113 @@ class Button : Clickable, Focusable {
 
 
 
-# Aggregation
+# Aggregation, Composition
 
-# Composition
+둘 다 부분-전체를 나타내는 방법이다.
+
+- Aggregation: 한 객체가 다른 객체를 포함하는 것을 의미한다. 이는 ‘has-a’관계로 표현되며, 포함된 객체가 포함하는 객체 없이 독립적으로 존재할 수 있다. 예를 들어 학생과 학교의 관계에서 학교는 학생을 포함하지만, 학생이 없어져도 학교는 존재할 수 있다.
+    - 코틀린에서는 클래스 내부에 다른 클래스의 인스턴스 속성을 가지는 방식으로 구현이 가능
+    
+    ```kotlin
+    class Address(
+        val country: String,
+        val city: String
+    
+    class College(
+        val collegeName: String,
+        val collegeAddress: Address
+    )
+    class Student(
+        val studentName: String,
+        val studentAddress: Address,
+        val studentCollege: College
+    )
+    ```
+    
+- Composition: 부분 객체의 라이프 사이클이 전체 객체의 라이프 사이클에 종속적인 경우이다. 예를 들어 집과 방의 관계에서 방은 집에 속해있으며, 집이 없어지면 방도 없어진다.
+    - 마찬가지로 클래스 내부에 다른 클래스의 인스턴스 속성을 가지는 방식으로 구현이 가능
+    
+    ```kotlin
+    class CarProduct(color: String, maxSpeed: Int): Car(color, maxSpeed){
+    	lateinit var carEngine: CarEngine
+    	fun setCar(){
+    	    	carEngine = CarEngine()
+            carEngine.startEngine()
+        }
+    }
+    
+    open class Car(val color: String, val maxSpeed: Int) {
+        fun carInfo() { println("$color $maxSpeed $name") }
+    }
+    
+    class CarEngine {
+        fun startEngine() { println("엔진 가동") }
+        fun stopEngine() { println("엔진 중단") }
+    }
+    ```
+    
+
+상속은 아래의 문제점을 야기한다.
+
+- 코틀린에서 상속은 하나의 클래스에 대해서만 가능
+    - Base 클래스가 거대해지고 복잡해질 수 있음
+- 클래스의 모든 것을 가지고 옴
+    - 불필요한 함수도 override 해야 할 수도 있음
+- 개발자가 메소드를 이해하기 위해 상위 클래스를 여러번 확인해야 함
+
+이런 이유로 다른 대안인 컴포지션(Composition)을 활용한다. 컴포지션은 객체를 프로퍼티로 갖고, 함수를 호출하는 형태로 재사용하는 것이다.
+
+```kotlin
+class Progress{
+    fun showProgress(){ /* show progress */ }
+    fun hideProgress(){ /* hide progress */ }
+}
+
+class ProfileLoader{
+    val progress = Progress()
+    
+    fun load(){
+        progress.showProgress()
+        // 프로필을 읽어 들임
+        progress.hideProgress()
+    }
+}
+
+class ImageLoader{
+    val progress = Progress()
+    
+    fun load(){
+        progress.showProgress()
+        // 이미지를 읽어 들임
+        progress.hideProgress()
+    }
+}
+```
+
+컴포지션의 장점은 아래와 같다.
+
+- 더 안전하다. 상위 클래스의 내부 구현에 의존하지 않고, 외부에서 관찰되는 동작에만 의존함
+- 더 유연하다. 여러 클래스를 대상으로 할 수 있다. 상속과 달리 필요한 기능만 사용할 수 있음
+- 더 명시적이다. 직접 상위 클래스의 메소드를 명시적으로 호출해야 하기 때문에 확실하게 알 수 있음
 
 # Dependency Injection
+
+의존성 주입은 객체 지향 프로그래밍에서 발생하는 객체간 의존 관계를 효과적으로 관리하기 위한 방법 중 하나이다.
+
+장점
+
+- 코드의 재사용성 향상
+    - 객체 간의 의존 관계를 직접 관리하지 않고, 외부에서 주입받기 때문에 객체의 재사용성이 향상됨
+    - 의존성을 주입하는 코드는 모듈화가 용이
+    - 다른 클래스에서도 동일한 방식으로 의존성을 주입 가능
+- 유연성과 확장성
+    - 객체 간의 의존 관계를 느슨하게 만들 수 있음
+    - 새로운 기능을 추가하거나 변경할 때 의존성을 주입하는 코드만 수정하면 되어 확장성이 높아짐
+- 테스트 용이성
+    - 의존 관계를 외부에서 주입하기 때문에 테스트하기 용이해짐.
+    - 테스트용 모의객체(mock)을 사용해 의존성 주입 가능
+    - 테스트의 격리성을 보장하면서 효율적인 테스트 가능
+- 모듈화
+    - 앱을 여러 모듈로 나누어 개발 가능
+    - 각 모듈의 독립성을 보장하면서 모듈 간의 의존성을 관리 가능
+    - 모듈별로 의존성 주입 코드를 분리해 코드의 가독성을 높일 수 있음
